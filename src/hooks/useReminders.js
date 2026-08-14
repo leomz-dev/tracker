@@ -10,6 +10,8 @@ const DEFAULTS = {
   startHour: '08:00',
   endHour: '22:00',
   habitIds: [],
+  tasksEnabled: false,
+  taskReminderHour: '20:00',
 };
 
 const loadSettings = () => {
@@ -36,6 +38,23 @@ const clearScheduled = async () => {
   notifications.forEach((n) => n.close());
 };
 
+const showNotification = (title, { body, tag, time, url }) => {
+  navigator.serviceWorker.ready.then((reg) => {
+    try {
+      reg.showNotification(title, {
+        body,
+        icon: '/icons/icon-192.png',
+        badge: '/icons/badge.png',
+        tag,
+        data: { url },
+        showTrigger: new NotificationTrigger({ time }),
+      });
+    } catch {
+      /* per-notification errors (quota, etc.) are ignored */
+    }
+  });
+};
+
 const buildTimes = ({ intervalHours, startHour, endHour }, now) => {
   const [startH, startM] = startHour.split(':').map(Number);
   const [endH, endM] = endHour.split(':').map(Number);
@@ -53,10 +72,7 @@ const buildTimes = ({ intervalHours, startHour, endHour }, now) => {
   return times;
 };
 
-const schedule = async (settings, habits) => {
-  const reg = await navigator.serviceWorker.ready;
-  await clearScheduled();
-
+const scheduleHabits = (settings, habits) => {
   const selected = habits.filter((h) => settings.habitIds.includes(h.id));
   if (settings.habitIds.length === 0 || selected.length === 0) return 0;
 
@@ -65,20 +81,70 @@ const schedule = async (settings, habits) => {
   let count = 0;
 
   for (const time of times) {
-    try {
-      await reg.showNotification('HabitFlow', {
-        body: `Hey, ¿ya hiciste ${names.join(', ')}?`,
-        icon: '/icons/icon-192.png',
-        badge: '/icons/badge.png',
-        tag: `habitflow-reminder-${time}`,
-        data: { url: '/' },
-        showTrigger: new NotificationTrigger({ time }),
+    showNotification('HabitFlow', {
+      body: `Hey, ¿ya hiciste ${names.join(', ')}?`,
+      tag: `habitflow-reminder-${time}`,
+      time,
+      url: '/',
+    });
+    count++;
+  }
+  return count;
+};
+
+const dateAtHour = (dateKey, hour, minute) => {
+  const [y, m, d] = dateKey.split('-').map(Number);
+  return new Date(y, m - 1, d, hour, minute, 0, 0);
+};
+
+const scheduleTasks = (settings, tasks) => {
+  if (!settings.tasksEnabled) return 0;
+
+  const [hour, minute] = settings.taskReminderHour.split(':').map(Number);
+  const now = Date.now();
+  const todayKey = getTodayKey();
+  let count = 0;
+
+  for (const task of tasks) {
+    if (task.completed || !task.dueDate) continue;
+
+    const dueDate = dateAtHour(task.dueDate, hour, minute);
+
+    if (task.dueDate >= todayKey) {
+      if (dueDate.getTime() > now) {
+        showNotification('HabitFlow — Tarea', {
+          body: `¿Ya hiciste la tarea «${task.title}»?`,
+          tag: `habitflow-task-${task.id}-due`,
+          time: dueDate.getTime(),
+          url: '/?page=tasks',
+        });
+        count++;
+      }
+
+      const oneDayBefore = new Date(dueDate.getTime() - 86400000);
+      if (oneDayBefore.getTime() > now) {
+        showNotification('HabitFlow — Tarea', {
+          body: `Mañana vence: «${task.title}»`,
+          tag: `habitflow-task-${task.id}-pre`,
+          time: oneDayBefore.getTime(),
+          url: '/?page=tasks',
+        });
+        count++;
+      }
+    } else {
+      const next = new Date();
+      next.setHours(hour, minute, 0, 0);
+      if (next.getTime() <= now) next.setDate(next.getDate() + 1);
+      showNotification('HabitFlow — Tarea', {
+        body: `Hey, no has hecho la tarea «${task.title}»`,
+        tag: `habitflow-task-${task.id}-overdue`,
+        time: next.getTime(),
+        url: '/?page=tasks',
       });
       count++;
-    } catch {
-      /* per-notification errors (quota, etc.) are ignored */
     }
   }
+
   return count;
 };
 
@@ -89,7 +155,7 @@ const ensurePermission = async () => {
   return Notification.requestPermission();
 };
 
-export function useReminders(habits) {
+export function useReminders(habits, tasks = []) {
   const [settings, setSettings] = useState(loadSettings);
   const [permission, setPermission] = useState(() =>
     'Notification' in window ? Notification.permission : 'unsupported'
@@ -129,19 +195,30 @@ export function useReminders(habits) {
   };
 
   const habitSignature = settings.habitIds.slice().sort().join(',');
+  const taskSignature = tasks
+    .filter((t) => !t.completed)
+    .map((t) => `${t.id}:${t.dueDate ?? ''}`)
+    .sort()
+    .join(',');
 
   useEffect(() => {
-    if (settings.enabled && supported && permission === 'granted' && habits.length > 0) {
-      schedule(settings, habits);
-    } else if (!settings.enabled && supported) {
+    if (!supported) return;
+    const anyEnabled = settings.enabled || settings.tasksEnabled;
+    if (anyEnabled && permission === 'granted') {
+      clearScheduled().then(() => {
+        scheduleHabits(settings, habits);
+        scheduleTasks(settings, tasks);
+      });
+    } else if (!anyEnabled) {
       clearScheduled();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settings.enabled, supported, permission, habitSignature]);
+  }, [settings.enabled, settings.tasksEnabled, supported, permission, habitSignature, taskSignature]);
 
   const scheduleNow = async (next = {}) => {
     const effective = { ...settings, ...next };
-    if (!effective.enabled) {
+    const anyEnabled = effective.enabled || effective.tasksEnabled;
+    if (!anyEnabled) {
       if (supported) await clearScheduled();
       return true;
     }
@@ -150,10 +227,71 @@ export function useReminders(habits) {
     if (perm !== 'granted') return false;
     if (!supported) return true;
     try {
-      await schedule(effective, habits);
+      await clearScheduled();
+      scheduleHabits(effective, habits);
+      scheduleTasks(effective, tasks);
       return true;
     } catch {
       return false;
+    }
+  };
+
+  useEffect(() => {
+    if (supported) return;
+    const anyEnabled = settings.enabled || settings.tasksEnabled;
+    if (!anyEnabled) return;
+
+    const fire = () => {
+      const pendingHabits = settings.enabled
+        ? habits.filter(
+            (h) => settings.habitIds.includes(h.id) && !h.completions[getTodayKey()]
+          )
+        : [];
+      if (pendingHabits.length > 0) {
+        toast('Hey, ¿ya hiciste tus hábitos?', {
+          description: pendingHabits.map((h) => h.name).join(', '),
+        });
+      }
+
+      if (settings.tasksEnabled) {
+        const pendingTasks = tasks.filter(
+          (t) => !t.completed && t.dueDate && t.dueDate <= getTodayKey()
+        );
+        if (pendingTasks.length > 0) {
+          toast('Tienes tareas por hacer', {
+            description: pendingTasks
+              .map((t) => `«${t.title}»`)
+              .join(', '),
+          });
+        }
+      }
+    };
+
+    fire();
+    const id = setInterval(fire, settings.intervalHours * 3600 * 1000);
+    return () => clearInterval(id);
+  }, [settings.enabled, settings.tasksEnabled, settings.intervalHours, settings.habitIds, supported, habits, tasks]);
+
+  const sendTestNotification = async () => {
+    if (!('Notification' in window)) return { ok: false, status: 'unsupported' };
+    const perm = await ensurePermission();
+    setPermission(perm);
+    if (perm !== 'granted') return { ok: false, status: 'denied' };
+
+    if (!supported) return { ok: true, status: 'inapp' };
+
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      await reg.showNotification('HabitFlow — Prueba', {
+        body: 'Las notificaciones están activadas y funcionando',
+        icon: '/icons/icon-192.png',
+        badge: '/icons/badge.png',
+        tag: 'habitflow-test',
+        data: { url: '/' },
+      });
+      return { ok: true, status: 'sent' };
+    } catch {
+      return { ok: false, status: 'error' };
     }
   };
 
@@ -164,26 +302,11 @@ export function useReminders(habits) {
     return true;
   };
 
-  useEffect(() => {
-    if (!settings.enabled || supported) return;
-    const fire = () => {
-      const pending = habits.filter(
-        (h) => settings.habitIds.includes(h.id) && !h.completions[getTodayKey()]
-      );
-      if (pending.length === 0) return;
-      toast('Hey, ¿ya hiciste tus hábitos?', {
-        description: pending.map((h) => h.name).join(', '),
-      });
-    };
-    fire();
-    const id = setInterval(fire, settings.intervalHours * 3600 * 1000);
-    return () => clearInterval(id);
-  }, [settings.enabled, settings.intervalHours, settings.habitIds, supported, habits]);
-
   return {
     settings,
     updateSettings,
     scheduleNow,
+    sendTestNotification,
     supported,
     permission,
     deferredPrompt,

@@ -24,13 +24,22 @@ const HabitCard = ({ habit, isCompleted, onToggle, onDelete, onEdit, stats }) =>
         }}
         aria-label={isCompleted ? `Desmarcar ${habit.name}` : `Completar ${habit.name}`}
         title={isCompleted ? 'Marcar como pendiente' : 'Marcar como completado'}
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="group/toggle flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
-        {isCompleted ? (
-          <CircleCheckBig className="h-7 w-7 animate-check-pop" style={{ color: habit.color }} />
-        ) : (
-          <Circle className="h-7 w-7 text-muted-foreground/40" />
-        )}
+        <span
+          className={cn(
+            'flex h-11 w-11 items-center justify-center rounded-full transition-colors',
+            isCompleted
+              ? 'bg-secondary'
+              : 'bg-secondary/50 ring-1 ring-inset ring-border group-hover/toggle:bg-accent group-hover/toggle:ring-ring/40'
+          )}
+        >
+          {isCompleted ? (
+            <CircleCheckBig className="h-7 w-7 animate-check-pop" style={{ color: habit.color }} />
+          ) : (
+            <Circle className="h-7 w-7 text-muted-foreground/60" />
+          )}
+        </span>
       </button>
 
       <Avatar className="h-11 w-11">

@@ -55,10 +55,20 @@
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
     overflow: hidden;
+    background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(1100px 640px at 105% -12%, hsl(262 80% 58% / 0.14), transparent 62%),
+      radial-gradient(900px 560px at -12% 112%, hsl(220 90% 60% / 0.12), transparent 62%),
+      radial-gradient(700px 480px at 55% 125%, hsl(262 80% 58% / 0.08), transparent 60%);
+    background-attachment: fixed;
   }
 
   button:not(:disabled) {
     cursor: pointer;
+  }
+
+  ::selection {
+    background: hsl(262 80% 58% / 0.4);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -106,5 +116,19 @@
     background: hsl(var(--card) / 0.5);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+  }
+  .animate-grow-up {
+    animation: grow-up 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+  }
+}
+
+@keyframes grow-up {
+  from {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
   }
 }

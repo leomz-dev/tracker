@@ -1,10 +1,11 @@
 import React from 'react';
-import { CalendarDays, ChartColumn, Settings as SettingsIcon, Zap } from 'lucide-react';
+import { CalendarDays, ChartColumn, ListTodo, Settings as SettingsIcon, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from './ui/separator';
 
 const NAV_ITEMS = [
   { id: 'today', label: 'Hoy', icon: CalendarDays },
+  { id: 'tasks', label: 'Tareas', icon: ListTodo },
   { id: 'stats', label: 'Estadísticas', icon: ChartColumn },
   { id: 'settings', label: 'Ajustes', icon: SettingsIcon },
 ];
@@ -52,7 +53,10 @@ const Sidebar = ({ activePage, onNavigate }) => {
       <Separator />
 
       <div className="px-4 py-4 sm:px-5">
-        <p className="hidden text-xs text-muted-foreground sm:block">HabitFlow v2.0</p>
+        <p className="hidden text-xs text-muted-foreground sm:block">HabitFlow v2.1</p>
+        <p className="hidden text-[11px] text-muted-foreground/60 sm:block">
+          Atajos: <kbd className="rounded bg-secondary px-1 font-mono">1</kbd>–<kbd className="rounded bg-secondary px-1 font-mono">4</kbd> secciones · <kbd className="rounded bg-secondary px-1 font-mono">N</kbd> nuevo
+        </p>
       </div>
     </aside>
   );

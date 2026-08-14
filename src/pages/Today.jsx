@@ -7,6 +7,8 @@ import { toast } from 'sonner';
 import HabitCard from '../components/HabitCard';
 import DashboardHero from '../components/DashboardHero';
 import HabitFormModal from '../components/HabitFormModal';
+import SectionHeader from '../components/SectionHeader';
+import FloatingAdd from '../components/FloatingAdd';
 import { Button } from '../components/ui/button';
 import { Card } from '../components/ui/card';
 
@@ -136,10 +138,8 @@ const Today = ({ habits, toggleCompletion, isTodayCompleted, addHabit, updateHab
       ) : (
         <div className="space-y-6">
           {pending.length > 0 && (
-            <section aria-labelledby="pending-title">
-              <h2 id="pending-title" className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                Pendientes · {pending.length}
-              </h2>
+            <section aria-label="Hábitos pendientes">
+              <SectionHeader title="Pendientes" count={pending.length} tone="bg-primary/15 text-primary" />
               <div className="grid grid-cols-1 gap-3 xl:grid-cols-2" role="list" aria-label="Hábitos pendientes">
                 {pending.map((habit) => (
                   <HabitCard
@@ -157,10 +157,8 @@ const Today = ({ habits, toggleCompletion, isTodayCompleted, addHabit, updateHab
           )}
 
           {completed.length > 0 && (
-            <section aria-labelledby="completed-title">
-              <h2 id="completed-title" className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                Completados · {completed.length}
-              </h2>
+            <section aria-label="Hábitos completados">
+              <SectionHeader title="Completados" count={completed.length} tone="bg-emerald-500/15 text-emerald-400" />
               <div className="grid grid-cols-1 gap-3 xl:grid-cols-2" role="list" aria-label="Hábitos completados">
                 {completed.map((habit) => (
                   <HabitCard
@@ -180,11 +178,15 @@ const Today = ({ habits, toggleCompletion, isTodayCompleted, addHabit, updateHab
       )}
 
       {habits.length > 0 && (
-        <Button className="self-start" onClick={openCreate}>
-          <Plus className="mr-2 h-4 w-4" aria-hidden="true" />
-          Agregar hábito
-        </Button>
+        <div className="flex justify-end">
+          <Button onClick={openCreate}>
+            <Plus className="mr-2 h-4 w-4" aria-hidden="true" />
+            Agregar hábito
+          </Button>
+        </div>
       )}
+
+      <FloatingAdd onClick={openCreate} label="Agregar hábito" />
 
       <HabitFormModal
         open={formOpen}

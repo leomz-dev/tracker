@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { toast } from 'sonner';
-import { BellRing, Smartphone, Download, Info, Clock } from 'lucide-react';
+import { BellRing, Smartphone, Download, Info, Clock, ListTodo, AlarmClock, ChevronDown } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Switch } from '../components/ui/switch';
@@ -12,13 +12,15 @@ const INTERVALS = [2, 3, 4, 6];
 const fieldClass =
   'flex h-11 w-full items-center rounded-md border border-input bg-background px-3 py-2 text-base text-foreground sm:h-10 sm:text-sm';
 
-const Settings = ({ reminders, habits }) => {
-  const { settings, supported, permission, canInstall, installApp } = reminders;
+const Settings = ({ reminders, habits, tasks }) => {
+  const { settings, supported, permission, canInstall, installApp, sendTestNotification } = reminders;
 
   const [enabled, setEnabled] = useState(settings.enabled);
   const [intervalHours, setIntervalHours] = useState(settings.intervalHours);
   const [startHour, setStartHour] = useState(settings.startHour);
   const [endHour, setEndHour] = useState(settings.endHour);
+  const [tasksEnabled, setTasksEnabled] = useState(settings.tasksEnabled);
+  const [taskReminderHour, setTaskReminderHour] = useState(settings.taskReminderHour);
   const [selected, setSelected] = useState(
     () =>
       new Set(settings.habitIds.length > 0 ? settings.habitIds : habits.map((h) => h.id))
@@ -34,16 +36,11 @@ const Settings = ({ reminders, habits }) => {
   };
 
   const handleSave = async () => {
-    reminders.updateSettings({ enabled, intervalHours, startHour, endHour, habitIds: [...selected] });
-    const ok = await reminders.scheduleNow({
-      enabled,
-      intervalHours,
-      startHour,
-      endHour,
-      habitIds: [...selected],
-    });
+    const patch = { enabled, intervalHours, startHour, endHour, habitIds: [...selected], tasksEnabled, taskReminderHour };
+    reminders.updateSettings(patch);
+    const ok = await reminders.scheduleNow(patch);
 
-    if (!enabled) {
+    if (!enabled && !tasksEnabled) {
       toast.success('Recordatorios desactivados');
       return;
     }
@@ -55,7 +52,32 @@ const Settings = ({ reminders, habits }) => {
       toast.warning('Tu navegador no soporta notificaciones programadas: se mostrarán avisos dentro de la app');
       return;
     }
-    toast.success(`Recordatorios activados cada ${intervalHours}h`);
+    const labels = [];
+    if (enabled) labels.push(`cada ${intervalHours}h`);
+    if (tasksEnabled) labels.push('para tus tareas');
+    toast.success(`Recordatorios activados ${labels.join(' y ')}`);
+  };
+
+  const handleTest = async () => {
+    const result = await sendTestNotification();
+    if (result.ok === false) {
+      if (result.status === 'denied') {
+        toast.warning('Bloqueaste las notificaciones. Actívalas para este sitio en tu navegador.');
+      } else if (result.status === 'unsupported') {
+        toast.error('Tu navegador no soporta notificaciones.');
+      } else {
+        toast.error('No se pudo enviar la prueba. Instala la app y vuelve a intentarlo.');
+      }
+      return;
+    }
+    if (result.status === 'sent') {
+      toast.success('Notificación de prueba enviada. Revisa tu pantalla.');
+    } else if (result.status === 'inapp') {
+      toast('Aviso de prueba (dentro de la app)', {
+        description:
+          'Este navegador no soporta notificaciones del sistema; así se verán tus recordatorios.',
+      });
+    }
   };
 
   return (
@@ -100,16 +122,22 @@ const Settings = ({ reminders, habits }) => {
             <div className="space-y-5">
               <div className="space-y-2">
                 <label htmlFor="interval" className="text-sm font-medium">Recordar cada</label>
-                <select
-                  id="interval"
-                  value={intervalHours}
-                  onChange={(e) => setIntervalHours(Number(e.target.value))}
-                  className={cn(fieldClass, 'appearance-none')}
-                >
-                  {INTERVALS.map((h) => (
-                    <option key={h} value={h}>Cada {h} horas</option>
-                  ))}
-                </select>
+                <div className="relative">
+                  <select
+                    id="interval"
+                    value={intervalHours}
+                    onChange={(e) => setIntervalHours(Number(e.target.value))}
+                    className={cn(fieldClass, 'cursor-pointer appearance-none pr-10')}
+                  >
+                    {INTERVALS.map((h) => (
+                      <option key={h} value={h}>Cada {h} horas</option>
+                    ))}
+                  </select>
+                  <ChevronDown
+                    className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                    aria-hidden="true"
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -196,6 +224,55 @@ const Settings = ({ reminders, habits }) => {
         </CardContent>
       </Card>
 
+      <Card className="p-5 sm:p-6">
+        <CardHeader className="flex-row items-center gap-3 space-y-0 p-0">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15 text-primary">
+            <ListTodo className="h-5 w-5" aria-hidden="true" />
+          </div>
+          <div>
+            <CardTitle className="text-lg">Recordatorios de tareas</CardTitle>
+            <CardDescription>
+              Avisos el día anterior y el día de la fecha límite de tus tareas pendientes
+            </CardDescription>
+          </div>
+        </CardHeader>
+
+        <Separator className="my-4" />
+
+        <CardContent className="space-y-5 p-0">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="font-medium">Activar recordatorios de tareas</p>
+              <p className="text-sm text-muted-foreground">
+                Recibirás «¿Ya hiciste la tarea?» o «No has hecho la tarea» por cada tarea con fecha
+              </p>
+            </div>
+            <Switch checked={tasksEnabled} onCheckedChange={setTasksEnabled} aria-label="Activar recordatorios de tareas" />
+          </div>
+
+          {tasksEnabled && (
+            <div className="space-y-2">
+              <label htmlFor="task-reminder-hour" className="flex items-center gap-2 text-sm font-medium">
+                <AlarmClock className="h-4 w-4" aria-hidden="true" />
+                Hora del recordatorio
+              </label>
+              <input
+                id="task-reminder-hour"
+                type="time"
+                value={taskReminderHour}
+                onChange={(e) => setTaskReminderHour(e.target.value)}
+                className={fieldClass}
+              />
+              <p className="text-xs text-muted-foreground">
+                {tasks.length === 0
+                  ? 'Aún no tienes tareas. Crea una en «Tareas» para que te avisemos.'
+                  : `${tasks.filter((t) => !t.completed && t.dueDate).length} tarea${tasks.filter((t) => !t.completed && t.dueDate).length !== 1 ? 's' : ''} pendiente${tasks.filter((t) => !t.completed && t.dueDate).length !== 1 ? 's' : ''} con fecha programada.`}
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       {canInstall && (
         <Card className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
           <div className="flex items-center gap-3">
@@ -216,8 +293,12 @@ const Settings = ({ reminders, habits }) => {
         </Card>
       )}
 
-      <div className="mt-auto flex justify-end">
-        <Button onClick={handleSave} disabled={enabled && selected.size === 0}>
+      <div className="mt-auto flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+        <Button variant="secondary" onClick={handleTest}>
+          <BellRing className="mr-2 h-4 w-4" aria-hidden="true" />
+          Probar notificación
+        </Button>
+        <Button onClick={handleSave} disabled={(enabled && selected.size === 0) && !tasksEnabled}>
           Guardar recordatorios
         </Button>
       </div>
