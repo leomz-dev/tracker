@@ -3,7 +3,7 @@ import { getLast7Days, getDateKey, formatDayLabel } from '../utils/dateUtils';
 import { isToday } from 'date-fns';
 import { cn } from '@/lib/utils';
 
-const WeekHeatmap = ({ completions = {}, color = '#7c5cbf' }) => {
+const WeekHeatmap = ({ completions = {}, color = '#3b6fc4' }) => {
   const days = getLast7Days();
   const completedInWeek = days.filter((d) => completions[getDateKey(d)]).length;
 

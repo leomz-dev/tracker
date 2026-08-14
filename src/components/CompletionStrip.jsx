@@ -42,7 +42,7 @@ const CompletionStrip = ({ habits }) => {
               className="w-full flex-1 rounded-sm transition-colors"
               style={{
                 height: `${height}px`,
-                background: count > 0 ? `hsl(262 80% ${55 + pct * 20}%)` : 'hsl(var(--secondary))',
+                background: count > 0 ? `hsl(215 65% ${48 + pct * 22}%)` : 'hsl(var(--secondary))',
                 opacity: count > 0 ? 0.5 + pct * 0.5 : 1,
               }}
               title={`${format(day, 'd MMM', { locale: es })}: ${count}/${totalHabits}`}

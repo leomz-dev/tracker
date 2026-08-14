@@ -19,9 +19,9 @@ const EMOJIS = [
 ];
 
 const COLORS = [
-  '#7c5cbf', '#5b8af0', '#34d399', '#f87171',
-  '#fbbf24', '#f472b6', '#a78bfa', '#38bdf8',
-  '#fb923c', '#4ade80', '#e879f9', '#22d3ee',
+  '#3b6fc4', '#5b8af0', '#38bdf8', '#22d3ee',
+  '#34d399', '#4ade80', '#fbbf24', '#fb923c',
+  '#f87171', '#f472b6', '#a78bfa', '#64748b',
 ];
 
 const HabitFormModal = ({ open, onOpenChange, onSave, habit }) => {
@@ -29,13 +29,13 @@ const HabitFormModal = ({ open, onOpenChange, onSave, habit }) => {
 
   const [name, setName] = useState('');
   const [emoji, setEmoji] = useState('🎯');
-  const [color, setColor] = useState('#7c5cbf');
+  const [color, setColor] = useState('#3b6fc4');
 
   useEffect(() => {
     if (open) {
       setName(habit?.name ?? '');
       setEmoji(habit?.emoji ?? '🎯');
-      setColor(habit?.color ?? '#7c5cbf');
+      setColor(habit?.color ?? '#3b6fc4');
     }
   }, [open, habit]);
 

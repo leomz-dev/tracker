@@ -158,7 +158,7 @@ const Today = ({ habits, toggleCompletion, isTodayCompleted, addHabit, updateHab
 
           {completed.length > 0 && (
             <section aria-label="Hábitos completados">
-              <SectionHeader title="Completados" count={completed.length} tone="bg-emerald-500/15 text-emerald-400" />
+              <SectionHeader title="Completados" count={completed.length} tone="bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300" />
               <div className="grid grid-cols-1 gap-3 xl:grid-cols-2" role="list" aria-label="Hábitos completados">
                 {completed.map((habit) => (
                   <HabitCard

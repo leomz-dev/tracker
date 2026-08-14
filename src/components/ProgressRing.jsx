@@ -22,7 +22,7 @@ const ProgressRing = ({ progress = 0, size = 148, strokeWidth = 12, completedCou
         />
         <circle
           className="fill-none transition-all duration-700 ease-out"
-          style={{ filter: 'drop-shadow(0 0 8px hsl(262 80% 58% / 0.5))' }}
+          style={{ filter: 'drop-shadow(0 2px 6px hsl(215 65% 45% / 0.25))' }}
           cx={size / 2}
           cy={size / 2}
           r={radius}
@@ -35,8 +35,8 @@ const ProgressRing = ({ progress = 0, size = 148, strokeWidth = 12, completedCou
         />
         <defs>
           <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#7c5cbf" />
-            <stop offset="100%" stopColor="#5b8af0" />
+            <stop offset="0%" stopColor="#3b6fc4" />
+            <stop offset="100%" stopColor="#7ba7e8" />
           </linearGradient>
         </defs>
       </svg>

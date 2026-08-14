@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { toast } from 'sonner';
-import { BellRing, Smartphone, Download, Info, Clock, ListTodo, AlarmClock, ChevronDown } from 'lucide-react';
+import { BellRing, Smartphone, Download, Info, Clock, ListTodo, AlarmClock, ChevronDown, Moon, Sun } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Switch } from '../components/ui/switch';
 import { Separator } from '../components/ui/separator';
 import { cn } from '@/lib/utils';
+import { useTheme } from '../hooks/useTheme';
 
 const INTERVALS = [2, 3, 4, 6];
 
@@ -14,6 +15,7 @@ const fieldClass =
 
 const Settings = ({ reminders, habits, tasks }) => {
   const { settings, supported, permission, canInstall, installApp, sendTestNotification } = reminders;
+  const { theme, toggleTheme } = useTheme();
 
   const [enabled, setEnabled] = useState(settings.enabled);
   const [intervalHours, setIntervalHours] = useState(settings.intervalHours);
@@ -93,6 +95,34 @@ const Settings = ({ reminders, habits, tasks }) => {
         <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Ajustes</h1>
         <p className="text-muted-foreground">Controla cómo y cuándo te recordamos tus hábitos</p>
       </header>
+
+      <Card className="p-5 sm:p-6">
+        <CardHeader className="flex-row items-center gap-3 space-y-0 p-0">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15 text-primary">
+            {theme === 'dark' ? (
+              <Moon className="h-5 w-5" aria-hidden="true" />
+            ) : (
+              <Sun className="h-5 w-5" aria-hidden="true" />
+            )}
+          </div>
+          <div>
+            <CardTitle className="text-lg">Apariencia</CardTitle>
+            <CardDescription>Elige entre el tema claro y el oscuro</CardDescription>
+          </div>
+        </CardHeader>
+
+        <Separator className="my-4" />
+
+        <CardContent className="flex items-center justify-between gap-4 p-0">
+          <div>
+            <p className="font-medium">Tema oscuro</p>
+            <p className="text-sm text-muted-foreground">
+              {theme === 'dark' ? 'Activado — interfaz en tonos oscuros' : 'Desactivado — interfaz clara'}
+            </p>
+          </div>
+          <Switch checked={theme === 'dark'} onCheckedChange={toggleTheme} aria-label="Activar tema oscuro" />
+        </CardContent>
+      </Card>
 
       <Card className="p-5 sm:p-6">
         <CardHeader className="flex-row items-center gap-3 space-y-0 p-0">
@@ -178,7 +208,7 @@ const Settings = ({ reminders, habits, tasks }) => {
                             type="checkbox"
                             checked={selected.has(habit.id)}
                             onChange={() => toggleHabit(habit.id)}
-                            className="h-5 w-5 accent-[#7c5cbf]"
+                            className="h-5 w-5 accent-[#3b6fc4]"
                           />
                           <span
                             className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs"
@@ -201,12 +231,12 @@ const Settings = ({ reminders, habits, tasks }) => {
             className={cn(
               'flex items-start gap-2 rounded-lg border p-3 text-sm',
               !supported
-                ? 'border-amber-500/30 bg-amber-500/10 text-amber-300'
+                ? 'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300'
                 : permission === 'denied'
                   ? 'border-destructive/30 bg-destructive/10 text-destructive'
                   : permission === 'default'
                     ? 'border-border bg-muted/40 text-muted-foreground'
-                    : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
+                    : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
             )}
             role="status"
           >

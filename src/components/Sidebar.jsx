@@ -1,7 +1,8 @@
 import React from 'react';
-import { CalendarDays, ChartColumn, ListTodo, Settings as SettingsIcon, Zap } from 'lucide-react';
+import { CalendarDays, ChartColumn, ListTodo, Moon, Settings as SettingsIcon, Sun, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from './ui/separator';
+import { useTheme } from '../hooks/useTheme';
 
 const NAV_ITEMS = [
   { id: 'today', label: 'Hoy', icon: CalendarDays },
@@ -11,9 +12,11 @@ const NAV_ITEMS = [
 ];
 
 const Sidebar = ({ activePage, onNavigate }) => {
+  const { theme, toggleTheme } = useTheme();
+
   return (
     <aside
-      className="flex h-full w-16 flex-col border-r border-border bg-card/40 backdrop-blur-sm sm:w-60"
+      className="flex h-full w-16 flex-col border-r border-border bg-card/70 backdrop-blur-sm sm:w-60"
       role="navigation"
       aria-label="Navegación principal"
     >
@@ -38,7 +41,7 @@ const Sidebar = ({ activePage, onNavigate }) => {
                 'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                 isActive
-                  ? 'bg-primary/15 text-foreground'
+                  ? 'bg-primary/10 text-primary'
                   : 'text-muted-foreground hover:bg-accent hover:text-foreground'
               )}
               title={label}
@@ -49,6 +52,26 @@ const Sidebar = ({ activePage, onNavigate }) => {
           );
         })}
       </nav>
+
+      <Separator />
+
+      <div className="px-3 py-3">
+        <button
+          onClick={toggleTheme}
+          aria-label={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+          title={theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          {theme === 'dark' ? (
+            <Sun className="h-5 w-5 shrink-0" aria-hidden="true" />
+          ) : (
+            <Moon className="h-5 w-5 shrink-0" aria-hidden="true" />
+          )}
+          <span className="hidden sm:inline">
+            {theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+          </span>
+        </button>
+      </div>
 
       <Separator />
 

@@ -138,25 +138,25 @@ const Tasks = ({ tasks, addTask, deleteTask, restoreTask, updateTask, toggleTask
             icon={Inbox}
             label="Pendientes"
             value={stats.pending}
-            tone="bg-violet-500/15 text-violet-400"
+            tone="bg-primary/10 text-primary"
           />
           <StatTile
             icon={CalendarClock}
             label="Para hoy"
             value={stats.dueToday}
-            tone="bg-sky-500/15 text-sky-400"
+            tone="bg-sky-500/10 text-sky-600 dark:bg-sky-500/15 dark:text-sky-300"
           />
           <StatTile
             icon={AlertTriangle}
             label="Vencidas"
             value={stats.overdue}
-            tone="bg-red-500/15 text-red-400"
+            tone="bg-red-500/10 text-red-600 dark:bg-red-500/15 dark:text-red-300"
           />
           <StatTile
             icon={CircleCheckBig}
             label="Completadas"
             value={stats.completed}
-            tone="bg-emerald-500/15 text-emerald-400"
+            tone="bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300"
           />
         </div>
       )}
@@ -177,11 +177,11 @@ const Tasks = ({ tasks, addTask, deleteTask, restoreTask, updateTask, toggleTask
         </Card>
       ) : (
         <div className="space-y-6">
-          <TaskSection title="Vencidas" tasks={overdue} tone="bg-red-500/15 text-red-400" {...commonHandlers} />
-          <TaskSection title="Hoy" tasks={dueToday} tone="bg-amber-500/15 text-amber-400" {...commonHandlers} />
-          <TaskSection title="Próximas" tasks={upcoming} sort tone="bg-sky-500/15 text-sky-400" {...commonHandlers} />
+          <TaskSection title="Vencidas" tasks={overdue} tone="bg-red-500/10 text-red-600 dark:bg-red-500/15 dark:text-red-300" {...commonHandlers} />
+          <TaskSection title="Hoy" tasks={dueToday} tone="bg-amber-500/10 text-amber-600 dark:bg-amber-500/15 dark:text-amber-300" {...commonHandlers} />
+          <TaskSection title="Próximas" tasks={upcoming} sort tone="bg-sky-500/10 text-sky-600 dark:bg-sky-500/15 dark:text-sky-300" {...commonHandlers} />
           <TaskSection title="Sin fecha" tasks={noDate} tone="bg-secondary text-muted-foreground" {...commonHandlers} />
-          <TaskSection title="Completadas" tasks={completed} tone="bg-emerald-500/15 text-emerald-400" {...commonHandlers} />
+          <TaskSection title="Completadas" tasks={completed} tone="bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300" {...commonHandlers} />
         </div>
       )}
 

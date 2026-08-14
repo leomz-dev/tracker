@@ -105,8 +105,7 @@ const Stats = ({ habits, getHabitStats }) => {
         </Card>
       ) : (
         <>
-          <Card className="relative overflow-hidden border-primary/20 glow-primary">
-            <div className="gradient-primary absolute inset-0 opacity-[0.1]" aria-hidden="true" />
+          <Card className="relative border-primary/25 glow-primary">
             <CardContent className="relative flex flex-col items-center gap-6 p-6 sm:flex-row sm:gap-8 sm:p-8">
               <ProgressRing
                 progress={overallRate / 100}
@@ -121,7 +120,7 @@ const Stats = ({ habits, getHabitStats }) => {
                     <h2 className="gradient-text text-2xl font-extrabold leading-none tracking-tight">
                       Tu constancia suma
                     </h2>
-                    {todayPerfect && <Sparkles className="h-5 w-5 text-amber-400" aria-hidden="true" />}
+                    {todayPerfect && <Sparkles className="h-5 w-5 text-amber-500 dark:text-amber-400" aria-hidden="true" />}
                   </div>
                   <p className="mt-1 text-sm text-muted-foreground">
                     Completitud global de los últimos 30 días
@@ -129,7 +128,7 @@ const Stats = ({ habits, getHabitStats }) => {
                 </div>
 
                 {todayPerfect && (
-                  <Badge className="gap-1 border-0 bg-emerald-500/15 text-emerald-300">
+                  <Badge className="gap-1 border-0 bg-emerald-500/10 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
                     <Sparkles className="h-3 w-3" aria-hidden="true" />
                     ¡Hoy es un día perfecto!
                   </Badge>
@@ -140,25 +139,25 @@ const Stats = ({ habits, getHabitStats }) => {
                     icon={Crown}
                     label="Racha actual"
                     value={`${bestStreak} día${bestStreak !== 1 ? 's' : ''}`}
-                    tone="bg-orange-500/15 text-orange-400"
+                    tone="bg-orange-500/10 text-orange-600 dark:bg-orange-500/15 dark:text-orange-300"
                   />
                   <HeroMetric
                     icon={Trophy}
                     label="Racha máxima"
                     value={`${bestMaxStreak} día${bestMaxStreak !== 1 ? 's' : ''}`}
-                    tone="bg-amber-500/15 text-amber-400"
+                    tone="bg-amber-500/10 text-amber-600 dark:bg-amber-500/15 dark:text-amber-300"
                   />
                   <HeroMetric
                     icon={CircleCheckBig}
                     label="Días perfectos"
                     value={perfectDays30}
-                    tone="bg-emerald-500/15 text-emerald-400"
+                    tone="bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300"
                   />
                   <HeroMetric
                     icon={Target}
                     label="Check-ins totales"
                     value={totalCheckIns}
-                    tone="bg-violet-500/15 text-violet-400"
+                    tone="bg-primary/10 text-primary"
                   />
                 </div>
               </div>
@@ -184,7 +183,7 @@ const Stats = ({ habits, getHabitStats }) => {
             <Card className="p-5">
               <CardHeader className="p-0 pb-1">
                 <div className="flex items-center gap-2">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-sky-500/15 text-sky-400" aria-hidden="true">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-sky-500/10 text-sky-600 dark:bg-sky-500/15 dark:text-sky-300" aria-hidden="true">
                     <CalendarDays className="h-4 w-4" />
                   </span>
                   <CardTitle className="text-lg">Consistencia por día</CardTitle>
@@ -210,7 +209,7 @@ const Stats = ({ habits, getHabitStats }) => {
           <Card className="p-5">
             <CardHeader className="p-0 pb-3">
               <div className="flex items-center gap-2">
-                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-500/15 text-amber-400" aria-hidden="true">
+                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 dark:bg-amber-500/15 dark:text-amber-300" aria-hidden="true">
                   <Award className="h-4 w-4" />
                 </span>
                 <CardTitle className="text-lg">Ranking de hábitos</CardTitle>
@@ -224,11 +223,11 @@ const Stats = ({ habits, getHabitStats }) => {
                     className={cn(
                       'flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-sm font-bold tabular-nums',
                       idx === 0
-                        ? 'bg-amber-500/20 text-amber-400'
+                        ? 'bg-amber-500/15 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300'
                         : idx === 1
-                          ? 'bg-slate-400/15 text-slate-300'
+                          ? 'bg-slate-500/10 text-slate-500 dark:bg-slate-500/20 dark:text-slate-300'
                           : idx === 2
-                            ? 'bg-orange-500/15 text-orange-400'
+                            ? 'bg-orange-500/10 text-orange-700 dark:bg-orange-500/15 dark:text-orange-300'
                             : 'bg-secondary text-muted-foreground'
                     )}
                     aria-hidden="true"
@@ -256,7 +255,7 @@ const Stats = ({ habits, getHabitStats }) => {
                   </div>
                   {stats.streak > 0 && (
                     <Badge variant="secondary" className="hidden shrink-0 gap-1 sm:inline-flex">
-                      <Flame className="h-3 w-3 text-orange-400" aria-hidden="true" />
+                      <Flame className="h-3 w-3 text-orange-500 dark:text-orange-400" aria-hidden="true" />
                       {stats.streak}
                     </Badge>
                   )}

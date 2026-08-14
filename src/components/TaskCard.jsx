@@ -10,11 +10,11 @@ const getDueLabel = (dueDate) => {
   if (!dueDate) return null;
   const date = new Date(`${dueDate}T00:00:00`);
   const days = differenceInCalendarDays(date, new Date());
-  if (days === 0) return { label: 'Hoy', tone: 'bg-amber-500/15 text-amber-400' };
-  if (days === 1) return { label: 'Mañana', tone: 'bg-sky-500/15 text-sky-400' };
-  if (days === -1) return { label: 'Ayer', tone: 'bg-red-500/15 text-red-400' };
+  if (days === 0) return { label: 'Hoy', tone: 'bg-amber-500/10 text-amber-600 dark:bg-amber-500/15 dark:text-amber-300' };
+  if (days === 1) return { label: 'Mañana', tone: 'bg-sky-500/10 text-sky-600 dark:bg-sky-500/15 dark:text-sky-300' };
+  if (days === -1) return { label: 'Ayer', tone: 'bg-red-500/10 text-red-600 dark:bg-red-500/15 dark:text-red-300' };
   if (days < 0)
-    return { label: `Vencida hace ${Math.abs(days)} día${Math.abs(days) !== 1 ? 's' : ''}`, tone: 'bg-red-500/15 text-red-400' };
+    return { label: `Vencida hace ${Math.abs(days)} día${Math.abs(days) !== 1 ? 's' : ''}`, tone: 'bg-red-500/10 text-red-600 dark:bg-red-500/15 dark:text-red-300' };
   return { label: format(date, "d 'de' MMMM", { locale: es }), tone: 'bg-secondary text-muted-foreground' };
 };
 
@@ -58,7 +58,7 @@ const TaskCard = ({ task, isCompleted, onToggle, onDelete, onEdit }) => {
           )}
         >
           {isCompleted ? (
-            <CircleCheckBig className="h-7 w-7 animate-check-pop text-emerald-500" />
+            <CircleCheckBig className="h-7 w-7 animate-check-pop text-emerald-500 dark:text-emerald-400" />
           ) : (
             <Circle className="h-7 w-7 text-muted-foreground/60" />
           )}

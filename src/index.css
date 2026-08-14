@@ -6,34 +6,67 @@
 
 @layer base {
   :root {
-    /* HabitFlow Dark Theme — Violet/Indigo */
-    --background: 224 71% 4%;
-    --foreground: 213 31% 91%;
+    /* HabitFlow Light Theme — Soft Marine */
+    --background: 210 40% 98%;
+    --foreground: 220 30% 16%;
 
-    --card: 222 47% 6%;
-    --card-foreground: 213 31% 91%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 30% 16%;
 
-    --popover: 224 71% 4%;
-    --popover-foreground: 213 31% 91%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 30% 16%;
 
-    --primary: 262 80% 58%;
-    --primary-foreground: 210 20% 98%;
+    --primary: 215 60% 42%;
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 222 47% 11%;
-    --secondary-foreground: 215 20% 65%;
+    --secondary: 215 32% 93%;
+    --secondary-foreground: 218 28% 30%;
 
-    --muted: 223 47% 11%;
-    --muted-foreground: 215 20% 58%;
+    --muted: 214 32% 94%;
+    --muted-foreground: 217 20% 46%;
 
-    --accent: 222 47% 14%;
-    --accent-foreground: 213 31% 91%;
+    --accent: 215 40% 93%;
+    --accent-foreground: 220 30% 22%;
 
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 20% 98%;
+    --destructive: 0 64% 46%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 222 47% 12%;
-    --input: 222 47% 12%;
-    --ring: 262 80% 58%;
+    --border: 215 30% 89%;
+    --input: 215 30% 88%;
+    --ring: 215 65% 55%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    /* HabitFlow Dark Theme — Soft Marine */
+    --background: 222 35% 8%;
+    --foreground: 213 32% 92%;
+
+    --card: 220 30% 11%;
+    --card-foreground: 213 32% 92%;
+
+    --popover: 220 30% 11%;
+    --popover-foreground: 213 32% 92%;
+
+    --primary: 214 62% 60%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 218 28% 16%;
+    --secondary-foreground: 215 25% 78%;
+
+    --muted: 218 28% 15%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 218 30% 19%;
+    --accent-foreground: 213 32% 92%;
+
+    --destructive: 0 62% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 218 28% 17%;
+    --input: 218 28% 17%;
+    --ring: 214 62% 62%;
 
     --radius: 0.75rem;
   }
@@ -56,10 +89,6 @@
     font-feature-settings: "rlig" 1, "calt" 1;
     overflow: hidden;
     background-color: hsl(var(--background));
-    background-image:
-      radial-gradient(1100px 640px at 105% -12%, hsl(262 80% 58% / 0.14), transparent 62%),
-      radial-gradient(900px 560px at -12% 112%, hsl(220 90% 60% / 0.12), transparent 62%),
-      radial-gradient(700px 480px at 55% 125%, hsl(262 80% 58% / 0.08), transparent 60%);
     background-attachment: fixed;
   }
 
@@ -68,7 +97,7 @@
   }
 
   ::selection {
-    background: hsl(262 80% 58% / 0.4);
+    background: hsl(215 65% 55% / 0.28);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -98,22 +127,23 @@
 
 @layer utilities {
   .gradient-primary {
-    background: linear-gradient(135deg, hsl(262 80% 58%), hsl(220 90% 60%));
+    background: hsl(var(--primary));
   }
   .gradient-text {
-    background: linear-gradient(135deg, hsl(262 80% 70%), hsl(220 90% 70%));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: hsl(var(--primary));
   }
   .glow-primary {
-    box-shadow: 0 0 24px hsl(262 80% 58% / 0.3);
+    box-shadow:
+      0 1px 2px hsl(215 65% 40% / 0.05),
+      0 12px 32px -12px hsl(215 65% 40% / 0.18);
   }
   .glow-success {
-    box-shadow: 0 0 24px hsl(142 71% 45% / 0.3);
+    box-shadow:
+      0 1px 2px hsl(150 55% 40% / 0.05),
+      0 12px 32px -12px hsl(150 55% 40% / 0.18);
   }
   .glass {
-    background: hsl(var(--card) / 0.5);
+    background: hsl(var(--card) / 0.7);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
   }

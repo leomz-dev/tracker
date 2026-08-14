@@ -24,7 +24,7 @@ const getWeeks = (count) => {
   return weeks;
 };
 
-const MonthlyHeatmap = ({ completions = {}, color = '#7c5cbf' }) => {
+const MonthlyHeatmap = ({ completions = {}, color = '#3b6fc4' }) => {
   const weeks = getWeeks(WEEKS);
   const today = startOfDay(new Date());
   const flat = weeks.flat();

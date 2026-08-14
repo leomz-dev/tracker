@@ -24,8 +24,7 @@ const DashboardHero = ({ habits, getHabitStats, todayProgress, todayCompletedCou
   const allDone = habits.length > 0 && todayCompletedCount === habits.length;
 
   return (
-    <Card className="relative overflow-hidden border-primary/20 glow-primary">
-      <div className="gradient-primary absolute inset-0 opacity-[0.08]" aria-hidden="true" />
+    <Card className="relative border-primary/25 glow-primary">
       <CardContent className="relative flex flex-col items-center gap-6 p-6 sm:flex-row sm:p-8">
         <ProgressRing
           progress={todayProgress}
@@ -38,7 +37,7 @@ const DashboardHero = ({ habits, getHabitStats, todayProgress, todayCompletedCou
             <span className="gradient-text text-2xl font-extrabold leading-none tracking-tight">
               {allDone ? '¡Día perfecto!' : 'Tu progreso hoy'}
             </span>
-            {allDone && <Sparkles className="h-5 w-5 text-amber-400" aria-hidden="true" />}
+            {allDone && <Sparkles className="h-5 w-5 text-amber-500 dark:text-amber-400" aria-hidden="true" />}
           </div>
 
           <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-3">
@@ -46,19 +45,19 @@ const DashboardHero = ({ habits, getHabitStats, todayProgress, todayCompletedCou
               icon={Flame}
               label="Racha máxima"
               value={`${bestStreak} día${bestStreak !== 1 ? 's' : ''}`}
-              tone="bg-orange-500/15 text-orange-400"
+              tone="bg-orange-500/10 text-orange-600 dark:bg-orange-500/15 dark:text-orange-300"
             />
             <MetricTile
               icon={Target}
               label="Hábitos creados"
               value={habits.length}
-              tone="bg-violet-500/15 text-violet-400"
+              tone="bg-primary/10 text-primary"
             />
             <MetricTile
               icon={CircleCheckBig}
               label="Completados hoy"
               value={`${todayCompletedCount}/${habits.length}`}
-              tone="bg-emerald-500/15 text-emerald-400"
+              tone="bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300"
             />
           </div>
         </div>

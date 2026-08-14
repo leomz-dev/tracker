@@ -53,7 +53,7 @@ const HabitCard = ({ habit, isCompleted, onToggle, onDelete, onEdit, stats }) =>
           <span className="truncate font-semibold tracking-tight">{habit.name}</span>
           {stats?.streak > 0 && (
             <Badge variant="secondary" className="shrink-0 gap-1">
-              <Flame className="h-3 w-3 text-orange-400" aria-hidden="true" />
+              <Flame className="h-3 w-3 text-orange-500 dark:text-orange-400" aria-hidden="true" />
               {stats.streak}
             </Badge>
           )}
