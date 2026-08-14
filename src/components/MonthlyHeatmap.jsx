@@ -34,7 +34,7 @@ const MonthlyHeatmap = ({ completions = {}, color = '#7c5cbf' }) => {
 
   return (
     <div
-      className="flex gap-1.5"
+      className="flex w-full gap-1.5"
       role="img"
       aria-label={`Calendario: ${completedInPeriod} días completados en las últimas ${WEEKS} semanas`}
     >
@@ -42,14 +42,14 @@ const MonthlyHeatmap = ({ completions = {}, color = '#7c5cbf' }) => {
         {WEEKDAY_LABELS.map((label, i) => (
           <span
             key={i}
-            className="flex h-2.5 items-center text-[9px] leading-none text-muted-foreground/70"
+            className="flex flex-1 items-center justify-center text-[9px] leading-none text-muted-foreground/70"
           >
             {label}
           </span>
         ))}
       </div>
 
-      <div className="grid grid-flow-col grid-rows-7 gap-[3px]">
+      <div className="grid w-full grid-flow-col grid-rows-7 auto-cols-fr gap-[3px]">
         {weeks.flat().map((date) => {
           const key = getDateKey(date);
           const filled = !!completions[key];
@@ -58,7 +58,7 @@ const MonthlyHeatmap = ({ completions = {}, color = '#7c5cbf' }) => {
             <span
               key={key}
               className={cn(
-                'h-2.5 w-2.5 rounded-[3px]',
+                'h-2.5 w-full rounded-[3px]',
                 future
                   ? 'bg-secondary/20'
                   : filled
